@@ -67,7 +67,7 @@ class DatasetGenerator:
               f"root_path directory in order to have a new and clean "
               f"dataset. The actual root_path is '{self.root_path}'.")
 
-    def generate(self):
+    def generate(self, days_gen=None):
         # Clean the dataset folder when generating a new
         # dataset
         if os.path.exists(self.root_path) and os.path.isdir(self.root_path):
@@ -80,7 +80,7 @@ class DatasetGenerator:
         self._write_materials_costs()
         self._add_materials_from_suppliers()
         self._add_headers()
-        self._run_plants()
+        self._run_plants(days_gen or self.num_run_days)
 
         """TODO: should probably remove last newline."""
 
@@ -281,9 +281,10 @@ class DatasetGenerator:
                     with open(cycle_path, "a") as cycle_file:
                         cycle_file.write("Timestamp,ItemID,ItemTypeID,Cycle Time,Status\n")
 
-    def _run_plants(self):
+    def _run_plants(self, num_days):
         """Run all the plants for the number of days
-        specified in the self.num_run_days variable.
+        specified in the self.num_run_days variable or
+        in the variable passed to generate.
 
         After each shift, we order the new raw materials
         needed, if any. After each day, we sell 3/4 of
@@ -293,8 +294,8 @@ class DatasetGenerator:
         each day with self.price_prob probability.
         """
         for day_num in tqdm(
-            range(self.num_run_days),
-            total=self.num_run_days,
+            range(num_days),
+            total=num_days,
             desc="Running plants"
         ):
             rnd = 0

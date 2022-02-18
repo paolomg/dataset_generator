@@ -4,4 +4,4 @@ Run with:
     from datagen import DatasetGenerator	
 
     dg = DatasetGenerator()
-    dg.generate()
+    dg.generate(70)
